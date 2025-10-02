@@ -1,0 +1,28 @@
+# Env files with secrets
+*.env
+backend.env
+frontend.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node modules
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# Docker
+*.log
+*.pid
+*.sock
+
+# VSCode
+.vscode/
+
+# MacOS
+.DS_Store

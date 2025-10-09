@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15
+    container_name: my_cloud_db
+    environment:
+      POSTGRES_DB: cloud_db
+      POSTGRES_USER: cloud_user
+      POSTGRES_PASSWORD: cloud_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - my_cloud_network
+
+  backend:
+    build:
+      context: ../cloud_storage
+    container_name: my_cloud_backend
+    command: gunicorn cloud_storage.wsgi:application --bind 0.0.0.0:8000
+    env_file:
+      - ../cloud_storage/backend.env
+    volumes:
+      - ../cloud_storage:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - db
+    networks:
+      - my_cloud_network
+
+  frontend:
+    build:
+      context: ../my_cloud_frontend
+    container_name: my_cloud_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    networks:
+      - my_cloud_network
+
+volumes:
+  db_data:
+  static_volume:
+  media_volume:
+  
+networks:
+  my_cloud_network:
+    driver: bridge
